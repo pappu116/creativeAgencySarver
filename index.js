@@ -46,7 +46,17 @@ client.connect((err) => {
     });
   });
 
-  // //order  red code
+  //data  dedicated user  read code start
+
+  app.get("/userSelf", (req, res) => {
+    orderCollection
+      .find({ email: req.query.email })
+      .toArray((err, documents) => {
+        res.send(documents);
+      });
+  });
+
+  // //rivew  red code
   app.get("/rivews", (req, res) => {
     reviewCollection.find({}).toArray((err, documents) => {
       res.send(documents);
