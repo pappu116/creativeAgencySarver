@@ -57,22 +57,35 @@ client.connect((err) => {
 
   app.post("/addReview", (req, res) => {
     const review = req.body;
-    console.log(review);
     reviewCollection.insertOne(review).then((result) => {
       res.send(result.insertedCount > 0);
     });
   });
+
   // add review code to
 
   app.post("/admin", (req, res) => {
     const admin = req.body;
-    console.log(admin);
     adminCollection.insertOne(admin).then((result) => {
       res.send(result.insertedCount > 0);
     });
   });
 
-  // add order code to
+  // update  status code to
+
+  app.patch("/update", (req, res) => {
+    console.log(req.body.status);
+    // orderCollection
+    //   .updateOne(
+    //     { _id: ObjectId(req.params.id) },
+    //     {
+    //       $set: { status: req.body.status },
+    //     }
+    //   )
+    //   .then((result) => {
+    //     res.send(result.modifiedCount > 0);
+    //   });
+  });
 
   // find admin or user code in
   app.post("/isAdmin", (req, res) => {
@@ -82,9 +95,10 @@ client.connect((err) => {
     });
   });
 
+  //add order code
+
   app.post("/addOrder", (req, res) => {
     const order = req.body;
-    console.log(order);
     orderCollection.insertOne(order).then((result) => {
       res.send(result.insertedCount > 0);
     });
@@ -96,37 +110,21 @@ client.connect((err) => {
     const file = req.files.file;
     const title = req.body.title;
     const description = req.body.description;
-    console.log(title, description, file);
 
-    const filePath = `${__dirname}/service/${file.name}`;
-    file.mv(filePath, (err) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).send({ msg: "Failed to upload Image" });
-      }
+    const newImg = req.files.file.data;
+    const encImg = newImg.toString("base64");
 
-      const newImg = fs.readFileSync(filePath);
-      const encImg = newImg.toString("base64");
+    var image = {
+      contentType: req.files.file.mimetype,
+      size: req.files.file.size,
+      img: Buffer.from(encImg, "base64"),
+    };
 
-      var image = {
-        contentType: req.files.file.mimetype,
-        size: req.files.file.size,
-        img: Buffer.from(encImg, "base64"),
-      };
-
-      serviceCollection
-        .insertOne({ title, description, image })
-        .then((result) => {
-          fs.remove(filePath, (error) => {
-            if (error) {
-              console.log(error);
-              res.status(500).send({ msg: "Failed to upload Image" });
-            }
-            res.send(result.insertedCount > 0);
-          });
-        });
-      // return res.send({ name: file.name, path: `/${file.name}` });
-    });
+    serviceCollection
+      .insertOne({ title, description, image })
+      .then((result) => {
+        res.send(result.insertedCount > 0);
+      });
   });
 });
 
