@@ -4,7 +4,7 @@ const cors = require("cors");
 const fs = require("fs-extra");
 const fileUpload = require("express-fileupload");
 const MongoClient = require("mongodb").MongoClient;
-const ObjectId = require("mongodb").ObjectId;
+// const ObjectId = require("mongodb").ObjectId;
 
 require("dotenv").config();
 
@@ -60,9 +60,13 @@ client.connect((err) => {
 
   // //rivew  red code
   app.get("/rivews", (req, res) => {
-    reviewCollection.find({}).toArray((err, documents) => {
-      res.send(documents);
-    });
+    reviewCollection
+      .find({})
+      .sort({ _id: -1 })
+      .limit(3)
+      .toArray((err, documents) => {
+        res.send(documents);
+      });
   });
 
   // add review code to
