@@ -4,6 +4,8 @@ const cors = require("cors");
 const fs = require("fs-extra");
 const fileUpload = require("express-fileupload");
 const MongoClient = require("mongodb").MongoClient;
+const ObjectId = require("mongodb").ObjectId;
+
 require("dotenv").config();
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.bfpdn.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
@@ -72,7 +74,7 @@ client.connect((err) => {
     });
   });
 
-  // add review code to
+  // add admin code
 
   app.post("/admin", (req, res) => {
     const admin = req.body;
@@ -81,20 +83,21 @@ client.connect((err) => {
     });
   });
 
-  // update  status code to
+  // update  status code
 
-  app.patch("/update", (req, res) => {
-    console.log(req.body.status);
-    // orderCollection
-    //   .updateOne(
-    //     { _id: ObjectId(req.params.id) },
-    //     {
-    //       $set: { status: req.body.status },
-    //     }
-    //   )
-    //   .then((result) => {
-    //     res.send(result.modifiedCount > 0);
-    //   });
+  app.patch("/update/:id", (req, res) => {
+    console.log(req.params.id, req.body.status);
+    orderCollection
+      .updateOne(
+        // { _id: ObjectId(req.params.id) },
+        { _id: req.params.id },
+        {
+          $set: { status: req.body.status },
+        }
+      )
+      .then((result) => {
+        res.send(result.modifiedCount > 0);
+      });
   });
 
   // find admin or user code in
