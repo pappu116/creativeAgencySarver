@@ -59,9 +59,13 @@ client.connect((err) => {
 
   // //rivew  red code
   app.get("/rivews", (req, res) => {
-    reviewCollection.find({}).toArray((err, documents) => {
-      res.send(documents);
-    });
+    reviewCollection
+      .find({})
+      .sort({ _id: -1 })
+      .limit(3)
+      .toArray((err, documents) => {
+        res.send(documents);
+      });
   });
 
   // add review code to
